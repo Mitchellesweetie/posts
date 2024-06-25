@@ -4,11 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 // use DB;
 
 class PostController extends Controller
 {
+    public function __construct(){
+        //anyone who is trying to enter into myposts cannot view unless he is logged in
+        $this->middleware('auth',['except'=>['services','about','index','show']]);
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -33,7 +39,8 @@ class PostController extends Controller
         return view('posts.index', compact('posts'));//works
         // return view('posts.index',$posts);
 
-    }
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -41,6 +48,7 @@ class PostController extends Controller
     public function create()
     {
         //
+
         return view ('posts.create');
     }
 
@@ -50,14 +58,37 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //
+
         $this->validate($request,[
         'title'=>'required',
-        'body'=>'required']);
-        #return $request->all();
+        'body'=>'required',
+        'cover_image'=>'image|nullable|max:1999'
+    ]);
 
+
+
+    if($request->hasFile('cover_image')){
+        //Get filename
+        $image=$request->file('cover_image')->getClientOriginalName();
+        //get just filename
+        $filename=pathinfo($image,PATHINFO_FILENAME);
+        //get just ext
+        $extension=$request->file('cover_image')->getClientOriginalExtension();
+        //filename to store
+        $fileNameToStore=time().'.'.$extension;
+        //upload image
+        $path=$request->file('cover_image')->storeAs('public/cover_images',$fileNameToStore);
+    }
+    else
+    {
+        $fileImage='noimage.jpg';
+    }
+            #return $request->all();
         $post=new Post;
         $post->title=$request->input('title');
         $post->body=$request->input('body');
+        $post->user_id=auth()->user()->id; // once can also see his data
+        $post->cover_image=$fileNameToStore;
         $post->save();
 
         return redirect()->route('showPost', $post->id)->with('success','Post Created');
@@ -75,6 +106,7 @@ class PostController extends Controller
         // return DB::select('select * from posts where id=?');//didnt work
 
        $post=Post::find($id);
+
         // $post=Post::orderBy('title','desc');
 
         return view('posts.show')->with('post',$post);
@@ -87,6 +119,7 @@ class PostController extends Controller
     {
         //
         $post=Post::find($id);
+
 
 
         return view('posts.edit')->with('post',$post);

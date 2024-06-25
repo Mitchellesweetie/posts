@@ -14,8 +14,8 @@
     <main class="login-form">
       <div class="cotainer">
           <div class="row justify-content-center">
-              <div class="col-md-8">
-                  <div class="card">
+              <div class="">
+                  <div class="card1">
                       <div class="card-header">Login</div>
                       <div class="card-body">
                           <form class='form-control'method="POST" action="{{ url('/login') }}">

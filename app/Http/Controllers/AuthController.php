@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Session;
 class AuthController extends Controller
 {
     //
+
+   
+
+
     public function login(){
         return view('auth.login');
     }
@@ -25,17 +29,12 @@ class AuthController extends Controller
             'password' => 'min:6|required_with:password_confirmation|same:password_confirmation',
             'password_confirmation'=>'required|min:6'
         ]);
-
-
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
 
         ]);
-
-
             // return $request->all();
 
             // auth()->login($user);
@@ -52,19 +51,30 @@ class AuthController extends Controller
         ]);
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
-            return redirect('/posts')//->intended('/about')
-                        ->withSuccess('You have Successfully loggedin');
+            return redirect('/posts');//->intended('/about')
+                        //->withSuccess('You have Successfully loggedin');
                             }
-        return redirect("/")->with('failed','Oppes! You have entered invalid credentials');
-
-
+        return redirect("/");//->with('failed','Oppes! You have entered invalid credentials');
 
     }
+    //trying guest login
+    public function guest()
+    {
+        if(Auth::check()){
+            return view('posts.index');
+        }
+
+
+
+        return redirect("login")->withSuccess('Opps! You do not have access');
+
+    }
+
     public function logout() {
 
         Session::flush();
         Auth::logout();
-        return Redirect('login')->withSuccess('successfully logged out');
+        return Redirect('/')->withSuccess('successfully logged out');
 
     }
 }

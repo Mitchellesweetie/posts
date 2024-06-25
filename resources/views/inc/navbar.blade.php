@@ -18,13 +18,16 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link" href="{{ url('/posts') }}">Home</a>
+                <a class="nav-link" href="{{ url('/myposts') }}">Home</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ url('/about') }}">About</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ url('/services') }}">Services</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url('/posts') }}">Posts</a>
               </li>
 
 
@@ -37,20 +40,20 @@
                 <li class="nav-item">
                     <li><a class="dropdown-item" href="{{ route('createPost') }}">Create</a></li>
                 </li>
-                @guest
+                @auth
+                    <li class="nav-item">
+                        <li><a class="dropdown-item" href="{{ url('/logout') }}">Logout</a></li>
+                    </li>
+
+                @else
                     <li class="nav-item">
                         <li><a class="dropdown-item" href="{{ url('/') }}">Login</a></li>
                     </li>
                     <li class="nav-item">
-                        <li><a class="dropdown-item" href="{{ url('/') }}">Register</a></li>
-                    </li>
-                @else
-
-                    <li class="nav-item">
-                        <li><a class="dropdown-item" href="{{ url('/') }}">Logout</a></li>
+                        <li><a class="dropdown-item" href="{{ url('/register') }}">Register</a></li>
                     </li>
 
-                @endguest
+                @endauth
 
 
                 </ul>
